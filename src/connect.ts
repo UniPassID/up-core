@@ -2,10 +2,9 @@
  * Invoke UniPass to obtain user account info
  * @param options
  */
-import { initListener, post2up, removeListener } from './bridge';
+import { initListener, post2up, removeListener, UPA_SESSION_KEY } from './bridge';
 import { UPAccount, UPConnectOptions, UPMessage } from './types';
 
-const UPA_SESSION_KEY = 'UP-A';
 
 export const connect = async (options?: UPConnectOptions) => {
   initListener();
@@ -26,7 +25,18 @@ const getAccount = async (options?: UPConnectOptions) => {
   const account = (await new Promise((resolve, reject) => {
     try {
       const payload = options ? JSON.stringify(options) : '';
-      const message = new UPMessage('UP_LOGIN', payload, resolve);
+      const message = new UPMessage(
+        'UP_LOGIN',
+        payload,
+        (accountStr: string) => {
+          const accountObj = JSON.parse(accountStr) as UPAccount;
+          if (accountObj && accountObj.username) {
+            sessionStorage.setItem(UPA_SESSION_KEY, accountStr);
+          }
+          resolve(accountObj);
+        },
+        reject
+      );
       post2up(message);
     } catch (e) {
       reject('Account Not Available');

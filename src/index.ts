@@ -13,6 +13,7 @@ const up = {
   disconnect,
   authorize,
   config,
+
 };
 
 export default up;
