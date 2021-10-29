@@ -23,17 +23,31 @@ export class UPAuthMessage {
   ) {}
 }
 
+type RESPONSE_TYPE = 'APPROVE' | 'DECLINE';
+export class UPResponse {
+  constructor(
+    public readonly type: RESPONSE_TYPE,
+    public readonly data: UPAccount | UPAuthResponse | string
+  ) {}
+}
+
 // ------------ CONNECT ------------
 export class UPMessage {
   constructor(
     public type: UPMessageType,
-    public payload?: string,
-    public resolve?: any,
-    public reject?: any
-  ) {}
+    public payload?: string
+  ) // public resolve?: any,
+  // public reject?: any
+  {}
 }
 
-export type UPMessageType = 'UP_READY' | 'UP_AUTH' | 'UP_LOGIN' | 'UP_ERROR';
+export type UPMessageType =
+  | 'UP_READY'
+  | 'UP_RESPONSE'
+  | 'UP_CLOSE'
+  | 'UP_AUTH'
+  | 'UP_LOGIN'
+  | 'UP_ERROR';
 
 export type UPConnectOptions = {
   email: boolean;

@@ -1,74 +1,50 @@
-import { getConfig } from './config';
-import { renderPop } from './pop';
-import { UPMessage } from './types';
-
-// const abortController = new AbortController();
+import { Callbacks, pop } from './pop';
+import { UPMessage, UPResponse } from './types';
 
 export const UPA_SESSION_KEY = 'UP-A';
-const MESSAGE_Q: UPMessage[] = [];
-var popup: Window | null;
-var unmount: () => void | null;
 
-export const initListener = () => {
-  // window.addEventListener('message', messageHandler, {
-  //   signal: abortController.signal,
-  // });
-  window.addEventListener('message', messageHandler);
-};
+export function execPop(message: UPMessage) {
+  return new Promise((resolve, reject) => {
+    pop(message, {
+      async onReady(_, callbacks: Callbacks) {
+        const { send } = callbacks;
+        try {
+          send(message);
+        } catch (err) {
+          throw err;
+        }
+      },
+      async onResponse(e: MessageEvent, callbacks: Callbacks) {
+        const { close } = callbacks;
+        try {
+          if (typeof e.data !== 'object') return;
 
-export const removeListener = () => {
-  // abortController.abort();
-  window.removeEventListener('message', messageHandler);
-};
+          console.log('[up-core] response', e.data);
+          const up_message = e.data as UPMessage;
+          const resp = JSON.parse(up_message.payload as string) as UPResponse;
 
-export const post2up = (message: UPMessage) => {
-  MESSAGE_Q.push(message);
-  switch (message.type) {
-    case 'UP_LOGIN':
-      ({popup, unmount} = renderPop(getConfig().upConnectUrl, getConfig().upPopup));
-      break;
-    case 'UP_AUTH':
-      ({popup, unmount} = renderPop(getConfig().upAuthUrl, getConfig().upPopup));
-      break;
-  }
-};
-
-const messageHandler = (e: MessageEvent) => {
-  console.log('[up-core]Message: ', e.data);
-  console.log('[up-core]MessageQ: ', MESSAGE_Q);
-  const { type, payload } = e.data as UPMessage;
-  console.log('[up-core]MessageType: ', type);
-  switch (type) {
-    case 'UP_READY':
-      sendMessageFromQ();
-      break;
-    case 'UP_LOGIN':
-      MESSAGE_Q.length && MESSAGE_Q[0].resolve(payload);
-      MESSAGE_Q.pop();
-      unmount();
-      break;
-    case 'UP_AUTH':
-      MESSAGE_Q.length && MESSAGE_Q[0].resolve(payload);
-      MESSAGE_Q.pop();
-      unmount();
-      break;
-    case 'UP_ERROR':
-      MESSAGE_Q.length && MESSAGE_Q[0].reject(payload);
-      MESSAGE_Q.pop();
-      unmount();
-      break;
-    default:
-      console.log(`[up-core] unknown MessageType: [${type}]`);
-      break;
-  }
-};
-
-const sendMessageFromQ = () => {
-  console.log(`[up-core] popup`, popup);
-  popup &&
-    MESSAGE_Q.length &&
-    popup.postMessage(
-      { ...MESSAGE_Q[0], resolve: null, reject: null },
-      getConfig().upDomain
-    );
-};
+          switch (resp.type) {
+            case 'APPROVE':
+              resolve(resp.data);
+              close();
+              break;
+            case 'DECLINE':
+              reject(`Declined: ${resp.data || 'No reason supplied'}`);
+              close();
+              break;
+            default:
+              reject(`Declined: No reason supplied`);
+              close();
+              break;
+          }
+        } catch (err) {
+          throw err;
+        }
+      },
+      async onMessage(_e: MessageEvent, _callbacks: Callbacks) {},
+      async onClose() {
+        reject(`Declined: Externally Halted`);
+      },
+    });
+  });
+}

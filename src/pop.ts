@@ -1,42 +1,76 @@
-const POP = 'UP_POP';
+import { getConfig } from './config';
+import { renderPop } from './render-pop';
+import { UPMessage, UPMessageType } from './types';
 
-var popup: Window | null = null;
-let previousUrl: string | null = null;
-
-function popupWindow(
-  url: string,
-  windowName: string,
-  win: Window,
-  config: string
-) {
-  return win.open(url, windowName, config);
+export interface Callbacks {
+  send: (message: UPMessage) => void;
+  close: () => void;
 }
 
-export function renderPop(src: string, config: string) {
-  if (popup == null || popup?.closed) {
-    popup = popupWindow(src, POP, window, config);
-  } else if (previousUrl !== src) {
-    popup.location.replace(src);
-    popup.focus();
-  } else {
-    popup.focus();
+export interface MessageHandler {
+  onReady: (e: MessageEvent, callbacks: Callbacks) => {};
+  onResponse: (e: MessageEvent, callbacks: Callbacks) => {};
+  onMessage: (e: MessageEvent, callbacks: Callbacks) => {};
+  onClose: () => {};
+}
+
+const noop = () => {};
+function serviceEndPoint(type: UPMessageType) {
+  if (type === 'UP_LOGIN') {
+    return getConfig().upConnectUrl;
+  } else if (type === 'UP_AUTH') {
+    return getConfig().upAuthUrl;
   }
 
-  previousUrl = src;
+  throw new Error(`unsupport type ${type}`);
+}
 
-  var timer = setInterval(function() {
-    if (popup && popup.closed) {
-      clearInterval(timer);
-      popup = null;
+export function pop(message: UPMessage, opts?: MessageHandler) {
+  if (message == null) return { send: noop, close: noop };
+
+  const onClose = opts?.onClose || noop;
+  const onMessage = opts?.onMessage || noop;
+  const onReady = opts?.onReady || noop;
+  const onResponse = opts?.onResponse || noop;
+
+  window.addEventListener('message', internal);
+  const { popup, unmount } = renderPop(
+    serviceEndPoint(message.type),
+    getConfig().upPopup
+  );
+  return { send, close };
+
+  function internal(e: MessageEvent) {
+    try {
+      if (typeof e.data !== 'object') return;
+      let data = e.data as UPMessage;
+      if (!data || !data.type) return;
+
+      if (e.data.type === 'UP_CLOSE') close();
+      if (data.type === 'UP_READY') onReady(e, { send, close });
+      if (data.type === 'UP_RESPONSE') onResponse(e, { send, close });
+      onMessage(e, { send, close });
+    } catch (error) {
+      console.error('Popup Callback Error', error);
+      close();
     }
-  }, 1000);
+  }
 
-  const unmount = () => {
-    if (popup && !popup.closed) {
-      popup.close();
-      popup = null;
+  function close() {
+    try {
+      window.removeEventListener('message', internal);
+      unmount();
+      onClose();
+    } catch (error) {
+      console.error('Popup Close Error', error);
     }
-  };
+  }
 
-  return { popup, unmount };
+  function send(msg: UPMessage) {
+    try {
+      popup?.postMessage(JSON.parse(JSON.stringify(msg || {})), '*');
+    } catch (error) {
+      console.error('Popup Send Error', msg, error);
+    }
+  }
 }
