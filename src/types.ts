@@ -4,7 +4,7 @@ export class UPAccount {
 
 export class UPAuthResponse {
   constructor(
-    public keyType: 'Secp256K1' | 'Secp256R1' | 'RSA',
+    public keyType: 'Secp256k1Pubkey' | 'Secp256r1Pubkey' | 'RsaPubkey',
     public pubkey: string,
     public sig: string
   ) {}

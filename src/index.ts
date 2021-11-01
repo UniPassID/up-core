@@ -13,7 +13,6 @@ const up = {
   disconnect,
   authorize,
   config,
-
 };
-
+export * from './types';
 export default up;
