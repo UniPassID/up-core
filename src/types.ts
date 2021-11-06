@@ -11,8 +11,8 @@ export class UPAuthResponse {
 }
 
 // ---------- AUTHORIZE ----------
-type AUTH_TYPE = 'PLAIN_MSG' | 'CKB_TX' | 'EVM_TX' | 'FLOW_TX';
-type AUTH_HASH = 'sha256' | 'sha3' | 'blake2b';
+export type AUTH_TYPE = 'PLAIN_MSG' | 'CKB_TX' | 'EVM_TX' | 'FLOW_TX';
+export type AUTH_HASH = 'sha256' | 'sha3' | 'blake2b';
 
 export class UPAuthMessage {
   constructor(
