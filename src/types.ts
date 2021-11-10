@@ -12,14 +12,12 @@ export class UPAuthResponse {
 
 // ---------- AUTHORIZE ----------
 export type AUTH_TYPE = 'PLAIN_MSG' | 'CKB_TX' | 'EVM_TX' | 'FLOW_TX';
-export type AUTH_HASH = 'sha256' | 'sha3' | 'blake2b';
 
 export class UPAuthMessage {
   constructor(
     public readonly type: AUTH_TYPE,
     public readonly username: string,
     public readonly payload: string,
-    public readonly hash: AUTH_HASH = 'sha256'
   ) {}
 }
 
