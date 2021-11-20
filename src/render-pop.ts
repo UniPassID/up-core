@@ -1,4 +1,4 @@
-const POP = 'UP_POP';
+const POP = '_blank';
 
 var popup: Window | null = null;
 let previousUrl: string | null = null;
