@@ -20,6 +20,8 @@ function serviceEndPoint(type: UPMessageType) {
     return getConfig().upConnectUrl;
   } else if (type === 'UP_AUTH') {
     return getConfig().upAuthUrl;
+  } else if (type === 'UP_READY') {
+    return getConfig().upLoadingUrl;
   }
 
   throw new Error(`unsupport type ${type}`);
