@@ -31,7 +31,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "up-core",
+  "name": "@lay2/up-core",
   "author": "lay2",
   "module": "dist/up-core.esm.js",
   "size-limit": [
