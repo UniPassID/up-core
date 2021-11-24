@@ -1,7 +1,4 @@
 const UP_DOMAIN = 'unipass.id';
-const UP_CONN_URL = 'https://unipass.id/connect';
-const UP_AUTH_URL = 'https://unipass.id/authorize';
-const UP_LOADING_URL = `https://${UP_DOMAIN}/connect/loading`;
 const UP_POPUP_CONFIG =
   'width=380,height=675,top=40,left=100,toolbar=no,scrollbars=yes,location=no,status=no';
 
@@ -13,21 +10,31 @@ export type UP_CONFIG = {
   upLoadingUrl: string;
 };
 
-var config: UP_CONFIG;
+export interface UPConfigOption {
+  domain?: string;
+  protocol?: 'https' | 'http';
+}
 
-export default (
-  upDomain?: string,
-  upConnectUrl?: string,
-  upAuthUrl?: string,
-  upPopup?: string,
-  upLoadingUrl?: string
-) => {
+var config: UP_CONFIG = {
+  upDomain: UP_DOMAIN,
+  upConnectUrl: `https://${UP_DOMAIN}/connect`,
+  upAuthUrl: `https://${UP_DOMAIN}/authorize`,
+  upPopup: UP_POPUP_CONFIG,
+  upLoadingUrl: `https://${UP_DOMAIN}/connect/loading`,
+};
+
+export default (option: UPConfigOption) => {
+  let { domain, protocol } = option;
+
+  domain = domain || UP_DOMAIN;
+  protocol = protocol || 'https';
+
   config = {
-    upDomain: upDomain || UP_DOMAIN,
-    upConnectUrl: upConnectUrl || UP_CONN_URL,
-    upAuthUrl: upAuthUrl || UP_AUTH_URL,
-    upPopup: upPopup || UP_POPUP_CONFIG,
-    upLoadingUrl: upLoadingUrl || UP_LOADING_URL,
+    upDomain: domain,
+    upConnectUrl: `${protocol}://${domain}/connect`,
+    upAuthUrl: `${protocol}://${domain}/authorize`,
+    upPopup: UP_POPUP_CONFIG,
+    upLoadingUrl: `${protocol}://${domain}/connect/loading`,
   };
   return config;
 };
