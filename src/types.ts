@@ -1,5 +1,9 @@
 export class UPAccount {
-  constructor(public username: string, public email?: string) {}
+  constructor(
+    public username: string,
+    public email?: string,
+    public evmKeys?: string[]
+  ) {}
 }
 
 export class UPAuthResponse {
@@ -17,7 +21,7 @@ export class UPAuthMessage {
   constructor(
     public readonly type: AUTH_TYPE,
     public readonly username: string,
-    public readonly payload: string,
+    public readonly payload: string
   ) {}
 }
 
@@ -33,10 +37,8 @@ export class UPResponse {
 export class UPMessage {
   constructor(
     public type: UPMessageType,
-    public payload?: string
-  ) // public resolve?: any,
-  // public reject?: any
-  {}
+    public payload?: string 
+  ) {}
 }
 
 export type UPMessageType =
@@ -48,5 +50,6 @@ export type UPMessageType =
   | 'UP_ERROR';
 
 export type UPConnectOptions = {
-  email: boolean;
+  email?: boolean;
+  evmKeys?: boolean;
 };
