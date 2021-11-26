@@ -35,10 +35,7 @@ export class UPResponse {
 
 // ------------ CONNECT ------------
 export class UPMessage {
-  constructor(
-    public type: UPMessageType,
-    public payload?: string 
-  ) {}
+  constructor(public type: UPMessageType, public payload?: string) {}
 }
 
 export type UPMessageType =

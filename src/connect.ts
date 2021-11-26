@@ -5,7 +5,9 @@
 import { execPop, UPA_SESSION_KEY } from './bridge';
 import { UPAccount, UPConnectOptions, UPMessage } from './types';
 
-export const connect = async (options?: UPConnectOptions): Promise<UPAccount> => {
+export const connect = async (
+  options?: UPConnectOptions
+): Promise<UPAccount> => {
   const sessionAccount = sessionStorage.getItem(UPA_SESSION_KEY);
   const account: UPAccount =
     (sessionAccount && (JSON.parse(sessionAccount) as UPAccount)) ||
