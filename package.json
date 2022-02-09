@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.6",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -31,16 +31,16 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@lay2/up-core",
+  "name": "up-core-test",
   "author": "lay2",
-  "module": "dist/up-core.esm.js",
+  "module": "dist/up-core-test.esm.js",
   "size-limit": [
     {
-      "path": "dist/up-core.cjs.production.min.js",
+      "path": "dist/up-core-test.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/up-core.esm.js",
+      "path": "dist/up-core-test.esm.js",
       "limit": "10 KB"
     }
   ],
