@@ -21,8 +21,33 @@ export class UPAuthMessage {
   constructor(
     public readonly type: AUTH_TYPE,
     public readonly username: string,
-    public readonly payload: string
+    public readonly payload: string | EvmTransaction
   ) {}
+}
+
+export enum EvmTransactionType {
+  APPROVE = 'approve', 
+  TRANSFER = 'transfer',
+  TRANSFER_TOKEN = 'transfer_token',
+  CONTRACT_CALL = 'contract_call',
+}
+
+export interface Token {
+  address: string;
+  symbol: string;
+  decimals: number;
+}
+export interface EvmTransaction {
+  type: EvmTransactionType,
+  raw: string,
+  to: string,
+  value: string,
+  feeToken: Token,
+  feeAmount: string,
+  description: string
+  data?: string,
+  token?: Token,
+  tokenAmount?: string,
 }
 
 type RESPONSE_TYPE = 'APPROVE' | 'DECLINE';
@@ -46,7 +71,14 @@ export type UPMessageType =
   | 'UP_LOGIN'
   | 'UP_ERROR';
 
+export enum UniPassTheme {
+  LIGHT = 'light',
+  DARK = 'dark'
+}
+
 export type UPConnectOptions = {
   email?: boolean;
   evmKeys?: boolean;
+  theme?: UniPassTheme;
+  chain?: string;
 };
