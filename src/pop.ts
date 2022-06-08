@@ -36,10 +36,7 @@ export function pop(message: UPMessage, opts?: MessageHandler) {
   const onResponse = opts?.onResponse || noop;
 
   window.addEventListener('message', internal);
-  const { popup, unmount } = renderPop(
-    serviceEndPoint(message.type),
-    getConfig().upPopup
-  );
+  const { popup, unmount } = renderPop(serviceEndPoint(message.type));
   return { send, close };
 
   function internal(e: MessageEvent) {

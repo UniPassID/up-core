@@ -2,8 +2,8 @@ export class UPAccount {
   constructor(
     public username: string,
     public email?: string,
-    public newborn?: boolean,
-    public evmKeys?: string[]
+    public evmKeys?: string[],
+    public newborn?: boolean
   ) {}
 }
 
