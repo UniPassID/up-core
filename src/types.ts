@@ -2,6 +2,7 @@ export class UPAccount {
   constructor(
     public username: string,
     public email?: string,
+    public newborn?: boolean,
     public evmKeys?: string[]
   ) {}
 }
@@ -26,7 +27,7 @@ export class UPAuthMessage {
 }
 
 export enum EvmTransactionType {
-  APPROVE = 'approve', 
+  APPROVE = 'approve',
   TRANSFER = 'transfer',
   TRANSFER_TOKEN = 'transfer_token',
   CONTRACT_CALL = 'contract_call',
@@ -38,16 +39,16 @@ export interface Token {
   decimals: number;
 }
 export interface EvmTransaction {
-  type: EvmTransactionType,
-  raw: string,
-  to: string,
-  value: string,
-  feeToken: Token,
-  feeAmount: string,
-  description: string
-  data?: string,
-  token?: Token,
-  tokenAmount?: string,
+  type: EvmTransactionType;
+  raw: string;
+  to: string;
+  value: string;
+  feeToken: Token;
+  feeAmount: string;
+  description: string;
+  data?: string;
+  token?: Token;
+  tokenAmount?: string;
 }
 
 type RESPONSE_TYPE = 'APPROVE' | 'DECLINE';
@@ -73,12 +74,17 @@ export type UPMessageType =
 
 export enum UniPassTheme {
   LIGHT = 'light',
-  DARK = 'dark'
+  DARK = 'dark',
 }
+
+export type UPChainInfo = {
+  id: number;
+  name: string;
+};
 
 export type UPConnectOptions = {
   email?: boolean;
   evmKeys?: boolean;
   theme?: UniPassTheme;
-  chain?: string;
+  chain?: UPChainInfo;
 };
