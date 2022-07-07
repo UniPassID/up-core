@@ -87,4 +87,5 @@ export type UPConnectOptions = {
   evmKeys?: boolean;
   theme?: UniPassTheme;
   chain?: UPChainInfo;
+  appName?: string;
 };
