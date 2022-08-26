@@ -52,7 +52,7 @@ constructor(
 ) {}
 }
 
-export type UPEventListener = (event: UPEvent) => {}
+export type UPEventListener = (event: UPEvent) => void
 
 export interface Token {
 address: string
