@@ -48,7 +48,8 @@ export function pop(message: UPMessage, opts?: MessageHandler) {
       if (e.data.type === 'UP_CLOSE') close();
       if (data.type === 'UP_READY') onReady(e, { send, close });
       if (data.type === 'UP_RESPONSE') onResponse(e, { send, close });
-      onMessage(e, { send, close });
+
+      if (data.type === 'UP_EVENT') onMessage(e, { send, close });
     } catch (error) {
       console.error('Popup Callback Error', error);
       close();

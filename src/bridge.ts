@@ -1,9 +1,10 @@
+import { UPEvent, UPEventListener } from '.';
 import { Callbacks, pop } from './pop';
 import { UPMessage, UPResponse } from './types';
 
 export const UPA_SESSION_KEY = 'UP-A';
 
-export function execPop(message: UPMessage) {
+export function execPop(message: UPMessage, listener?: UPEventListener) {
   return new Promise((resolve, reject) => {
     pop(message, {
       async onReady(_, callbacks: Callbacks) {
@@ -41,7 +42,21 @@ export function execPop(message: UPMessage) {
           throw err;
         }
       },
-      async onMessage(_e: MessageEvent, _callbacks: Callbacks) {},
+      async onMessage(e: MessageEvent, _callbacks: Callbacks) {
+        if (!listener) return;
+
+        try {
+          if (typeof e.data !== 'object') return;
+
+          console.log('[up-core] message', e.data);
+          const up_message = e.data as UPMessage;
+          const upEvent = JSON.parse(up_message.payload as string) as UPEvent;
+
+          listener(upEvent);
+        } catch (err) {
+          throw err;
+        }
+      },
       async onClose() {
         reject(`Declined: Externally Halted`);
       },

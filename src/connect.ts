@@ -25,7 +25,7 @@ const getAccount = async (options?: UPConnectOptions): Promise<UPAccount> => {
     const payload = options ? JSON.stringify(options) : '';
     const message = new UPMessage('UP_LOGIN', payload);
 
-    const account: UPAccount = (await execPop(message)) as UPAccount;
+    const account: UPAccount = (await execPop(message, options?.eventListener)) as UPAccount;
     console.log('connect resp', account);
     if (account && account.username) {
       sessionStorage.setItem(UPA_SESSION_KEY, JSON.stringify(account));
